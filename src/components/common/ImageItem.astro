@@ -1,0 +1,24 @@
+---
+const { image, tags, tagData } = Astro.props;
+
+const getTagName = (tagId) => {
+  const tag = tagData.find(tag => tag.id === tagId);
+  return tag ? tag.name : 'Unknown';
+};
+
+const getTagColor = (tagId) => {
+  const tag = tagData.find(tag => tag.id === tagId);
+  return tag ? tag.color : 'gray';
+};
+---
+
+<div class="image-item p-4 border border-gray-300 rounded-md text-center">
+  <img src={`/picWtagstudio/${image.filename}`} alt={image.filename} class="w-24 h-24 object-cover mx-auto" />
+  <div class="tags mt-2">
+    {tags.map(tagId => (
+      <span class="tag inline-block px-3 py-1 mr-2 rounded text-white text-sm" style={`background-color: ${getTagColor(tagId)}`}>
+        {getTagName(tagId)}
+      </span>
+    ))}
+  </div>
+</div>

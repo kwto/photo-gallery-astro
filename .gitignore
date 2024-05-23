@@ -2,8 +2,10 @@
 dist/
 .output/
 
-# dependencies
+# dependencies | picWtagstudio is photos and using the tagstudio tags
 node_modules/
+public/picWtagstudio/
+.idea/
 
 # logs
 npm-debug.log*
@@ -22,3 +24,4 @@ pnpm-debug.log*
 pnpm-lock.yaml
 
 .astro
+

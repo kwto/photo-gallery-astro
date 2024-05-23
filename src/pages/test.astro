@@ -1,0 +1,71 @@
+---
+import ImageItems from 'src/components/common/ImageItem.astro';
+
+const jsonData = await import('public/picWtagstudio/.TagStudio/ts_library.json');
+const { images, tags } = jsonData || {}; // Use empty objects if jsonData is not available
+
+let selectedTags = [];
+
+const toggleTag = (tagId) => {
+  const index = selectedTags.indexOf(tagId);
+  if (index > -1) {
+    selectedTags.splice(index, 1);
+  } else {
+    selectedTags.push(tagId);
+  }
+};
+
+const filteredImages = images?.filter(image =>
+  // Show image if no tags selected or image tags include any selected tags
+  selectedTags.length === 0 || image.tags.some(tagId => selectedTags.includes(tagId))
+);
+
+let loadedImages = []; // Keep track of loaded images
+
+const loadImage = async (image) => {
+  // Simulate loading delay (adjust delay as needed)
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  loadedImages.push(image); // Mark image as loaded
+};
+
+const isLoadingImage = (image) => !loadedImages.some(loadedImage => loadedImage.id === image.id);
+---
+
+<div class="container mx-auto px-4 mt-8">
+  <h1 class="text-2xl font-bold mb-4">Filter Images by Tags</h1>
+  <div class="flex flex-wrap mb-4">
+    {tags.map(tag => (
+      <label key={tag.id} class="flex items-center mr-4">
+        <input
+          type="checkbox"
+          id={`tag-${tag.id}`}
+          class="mr-2 form-checkbox h-5 w-5 accent-blue-500"
+          checked={selectedTags.includes(tag.id)}
+          onChange={() => toggleTag(tagId)}
+        />
+        <span for={`tag-${tag.id}`}>{tag.name}</span>
+      </label>
+    ))}
+  </div>
+  {images?.length > 0 ? (
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {filteredImages.map(image => (
+        <div key={image.id} class="image-container">
+          {isLoadingImage(image) ? (
+            <p class="text-gray-500 text-center">Loading...</p>
+          ) : (
+            <ImageItems
+              key={image.id}
+              image={{ ...image, src: `${image.path}/${image.filename}` }}
+              tags={image.tags}
+              tagData={tags}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p class="text-gray-500 text-center">Loading images...</p>
+  )}
+</div>
